@@ -4,22 +4,19 @@
     {
         static void Main(string[] args)
         {
-            int indiceMovimentacao = 0, numeroIdentificacao;
-            decimal saldoDisponivel, valorAdicional, limitePermitido, valorTransacao;
+            decimal valorTransacao;
             char acaoEscolhida;
-            string tipoTransacao;
-            string[] registroMovimentacoes = new string[100];
 
             // menu
             ExibirCabecalho();
             Console.Write("Número da conta: ");
-            numeroIdentificacao = Convert.ToInt32(Console.ReadLine());
+            ContaCorrente.numeroIdentificacao = Convert.ToInt32(Console.ReadLine());
             Console.Write("Saldo disponível: ");
-            saldoDisponivel = Convert.ToDecimal(Console.ReadLine());
+            ContaCorrente.saldoDisponivel = Convert.ToDecimal(Console.ReadLine());
             Console.Write("Valor adicional: ");
-            valorAdicional = Convert.ToDecimal(Console.ReadLine());
+            ContaCorrente.valorAdicional = Convert.ToDecimal(Console.ReadLine());
 
-            limitePermitido = saldoDisponivel + valorAdicional;
+            ContaCorrente.AtualizarLimite();
 
             while (true)
             {
@@ -32,64 +29,33 @@
                 {
                     Console.Write("Digite o valor da transação: ");
                     valorTransacao = Convert.ToDecimal(Console.ReadLine());
-                    if (valorTransacao < limitePermitido)
-                    {
-                        saldoDisponivel -= valorTransacao;
-                        tipoTransacao = "saque";
-                        registroMovimentacoes[indiceMovimentacao] = $"A conta {numeroIdentificacao} realizou a operação de {tipoTransacao} de R$ {valorTransacao}";
-                        indiceMovimentacao++;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Limite permitido excedido! Tente novamente.");
-                    }
+                    ContaCorrente.RealizarSaque(valorTransacao);
                 }
                 else if (acaoEscolhida == '2')
                 {
                     Console.Write("Digite o valor da transação: ");
                     valorTransacao = Convert.ToDecimal(Console.ReadLine());
-                    saldoDisponivel += valorTransacao;
-                    tipoTransacao = "depósito";
-                    registroMovimentacoes[indiceMovimentacao] = $"A conta {numeroIdentificacao} realizou a operação de {tipoTransacao} de R$ {valorTransacao}";
-                    indiceMovimentacao++;
+                    ContaCorrente.RealizarDeposito(valorTransacao);
                 }
                 else if (acaoEscolhida == '3')
                 {
-                    Console.WriteLine($"Saldo disponível: R$ {saldoDisponivel}");
+                    ContaCorrente.ExibirSaldo();
                 }
                 else if (acaoEscolhida == '4')
                 {
-                    if (registroMovimentacoes.Length > 0)
-                    {
-                        for (int i = 0; i < indiceMovimentacao; i++)
-                        {
-                            Console.WriteLine(registroMovimentacoes[i]);
-                        }
-                    } else
-                    {
-                        Console.WriteLine("Ainda não há movimentações!");
-                    }
+                    ContaCorrente.GerarExtrato();
                 }
                 else if(acaoEscolhida == '5')
                 {
                     Console.Write("Digite o valor da transação: ");
                     valorTransacao = Convert.ToDecimal(Console.ReadLine());
-                    if (valorTransacao < limitePermitido)
-                    {
-                        saldoDisponivel -= valorTransacao;
-                        tipoTransacao = "transferência";
-                        registroMovimentacoes[indiceMovimentacao] = $"A conta {numeroIdentificacao} realizou a operação de {tipoTransacao} de R$ {valorTransacao}";
-                        indiceMovimentacao++;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Limite permitido excedido! Tente novamente.");
-                    }
+                    ContaCorrente.RealizarTrasferencia(valorTransacao);
                 }
                 else
                 {
                     break;
                 }
+                ContaCorrente.AtualizarLimite();
                 Console.ReadLine();
             }
 
